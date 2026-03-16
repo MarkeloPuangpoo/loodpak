@@ -11,18 +11,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Send, CheckCircle2, Sparkles } from "lucide-react";
-
-type Player = {
-  id: string;
-  name: string;
-  isHost: boolean;
-  hasSubmittedWord: boolean;
-};
+import { Player } from "@/hooks/useRoom";
 
 type DraftingModalProps = {
   players: Player[];
   currentPlayerId: string;
-  onWordSubmitted: () => void;
+  onWordSubmitted: (word: string) => void;
 };
 
 export default function DraftingModal({
@@ -41,10 +35,10 @@ export default function DraftingModal({
     if (!forbiddenWord.trim()) return;
 
     setHasSubmitted(true);
-    onWordSubmitted();
+    onWordSubmitted(forbiddenWord.trim());
   };
 
-  const waitingCount = players.filter((p) => !p.hasSubmittedWord).length;
+  const waitingCount = players.filter((p) => !p.submitted_word).length;
 
   return (
     <Dialog open={true}>
@@ -159,15 +153,15 @@ export default function DraftingModal({
                   <div
                     key={player.id}
                     className={`flex items-center justify-between p-4 rounded-2xl border-[3px] transition-all duration-300 ${
-                      player.hasSubmittedWord 
+                      player.submitted_word 
                         ? "bg-white border-emerald-200 shadow-[4px_4px_0px_0px_#a7f3d0]" 
                         : "bg-slate-50 border-slate-200 shadow-[4px_4px_0px_0px_#e2e8f0]"
                     }`}
                   >
-                    <span className={`font-bold ${player.hasSubmittedWord ? "text-emerald-900" : "text-slate-600"}`}>
+                    <span className={`font-bold ${player.submitted_word ? "text-emerald-900" : "text-slate-600"}`}>
                       {player.name}
                     </span>
-                    {player.hasSubmittedWord ? (
+                    {player.submitted_word ? (
                       <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center border-2 border-emerald-500 text-emerald-600">
                         <CheckCircle2 className="w-5 h-5" strokeWidth={3} />
                       </div>

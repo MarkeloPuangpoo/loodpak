@@ -1,74 +1,86 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Zap, Target, Trophy, Skull, Home, Sparkles, Crown, ShieldAlert } from "lucide-react";
+import { Zap, Target, Trophy, Skull, Home, Sparkles, Crown, ShieldAlert, Mic, MicOff } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-type Player = {
-  id: string;
-  name: string;
-  isHost: boolean;
-  hasSubmittedWord: boolean;
-};
+import { Player } from "@/hooks/useRoom";
+import { useRoom } from "@/hooks/useRoom";
 
 type GameplayArenaProps = {
   players: Player[];
   currentPlayerId: string;
-  roomId: string;
+  roomCode: string;
+  microphoneControl?: {
+    isMuted: boolean;
+    toggleMute: () => Promise<void>;
+    isConnected: boolean;
+  };
 };
 
 type PlayerWithWord = Player & {
-  forbiddenWord: string;
-  isEliminated: boolean;
+  displayWord: string;
 };
 
 export default function GameplayArena({
-  players,
+  players: initialPlayers,
   currentPlayerId,
-  roomId,
+  roomCode,
+  microphoneControl,
 }: GameplayArenaProps) {
   const router = useRouter();
+  const { players, eliminatePlayer } = useRoom(roomCode);
+  const { isMuted = false, toggleMute = async () => {}, isConnected = false } = microphoneControl || {};
   
-  const [gamePlayers, setGamePlayers] = useState<PlayerWithWord[]>(() => {
-    const shuffledWords = shuffleArray(
-      players.map((p) => generateRandomWord())
-    );
-    
-    return players.map((player, index) => ({
-      ...player,
-      forbiddenWord: shuffledWords[index],
-      isEliminated: false,
-    }));
-  });
+  const [gamePlayers, setGamePlayers] = useState<PlayerWithWord[]>([]);
 
-  const handleEliminate = (playerId: string) => {
+  const currentPlayerData = gamePlayers.find(p => p.id === currentPlayerId);
+  const isEliminated = currentPlayerData?.is_eliminated || false;
+
+  useEffect(() => {
+    if (players.length > 0 && gamePlayers.length === 0) {
+      const playerWords = players.map(p => p.assigned_word || generateRandomWord());
+      const shuffled = shuffleArray(playerWords);
+      
+      setGamePlayers(players.map((player, index) => ({
+        ...player,
+        displayWord: shuffled[index],
+      })));
+    } else if (players.length > 0) {
+      setGamePlayers(prev => 
+        players.map(player => {
+          const existing = prev.find(p => p.id === player.id);
+          return {
+            ...player,
+            displayWord: existing?.displayWord || generateRandomWord(),
+          };
+        })
+      );
+    }
+  }, [players, gamePlayers.length]);
+
+  const handleEliminate = async (playerId: string) => {
     if (playerId === currentPlayerId) {
-      alert("You can't eliminate yourself!");
       return;
     }
 
     const player = gamePlayers.find((p) => p.id === playerId);
-    if (player?.isEliminated) {
+    if (player?.is_eliminated) {
       return;
     }
 
     const confirmed = confirm(
-      `Are you sure ${player?.name} said their forbidden word "${player?.forbiddenWord}"?`
+      `Are you sure ${player?.name} said their forbidden word "${player?.displayWord}"?`
     );
 
     if (confirmed) {
-      setGamePlayers(
-        gamePlayers.map((p) =>
-          p.id === playerId ? { ...p, isEliminated: true } : p
-        )
-      );
+      await eliminatePlayer(playerId);
     }
   };
 
-  const activePlayers = gamePlayers.filter((p) => !p.isEliminated);
-  const eliminatedPlayers = gamePlayers.filter((p) => p.isEliminated);
+  const activePlayers = gamePlayers.filter((p) => !p.is_eliminated);
+  const eliminatedPlayers = gamePlayers.filter((p) => p.is_eliminated);
   const currentPlayer = gamePlayers.find((p) => p.id === currentPlayerId);
 
   return (
@@ -98,11 +110,40 @@ export default function GameplayArena({
             </p>
           </div>
 
-          <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-md border-[3px] border-indigo-950 rounded-full px-6 py-2 shadow-[0px_4px_0px_0px_#c7d2fe]">
-            <span className="text-indigo-900 font-black uppercase text-sm tracking-wider">Room Code:</span>
-            <code className="text-indigo-600 font-mono font-black text-xl bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
-              {roomId}
-            </code>
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-md border-[3px] border-indigo-950 rounded-full px-6 py-2 shadow-[0px_4px_0px_0px_#c7d2fe]">
+              <span className="text-indigo-900 font-black uppercase text-sm tracking-wider">Room Code:</span>
+              <code className="text-indigo-600 font-mono font-black text-xl bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+                {roomCode}
+              </code>
+            </div>
+            
+            {/* Microphone Toggle */}
+            {isConnected && (
+              <Button
+                onClick={toggleMute}
+                disabled={isEliminated}
+                className={`h-12 px-6 rounded-full border-[3px] font-black text-sm uppercase tracking-wide shadow-[0px_4px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-[0px_2px_0px_0px_rgba(0,0,0,0.2)] hover:translate-y-[2px] transition-all ${
+                  isEliminated
+                    ? "bg-slate-300 border-slate-400 text-slate-500 cursor-not-allowed"
+                    : isMuted
+                    ? "bg-rose-500 border-rose-700 text-white hover:bg-rose-400"
+                    : "bg-emerald-500 border-emerald-700 text-white hover:bg-emerald-400"
+                }`}
+              >
+                {isMuted ? (
+                  <>
+                    <MicOff className="mr-2 h-5 w-5" strokeWidth={3} />
+                    {isEliminated ? "Eliminated" : "Muted"}
+                  </>
+                ) : (
+                  <>
+                    <Mic className="mr-2 h-5 w-5" strokeWidth={3} />
+                    Live
+                  </>
+                )}
+              </Button>
+            )}
           </div>
         </div>
 
@@ -183,7 +224,7 @@ export default function GameplayArena({
                     <p className={`text-2xl font-black ${player.id === currentPlayerId ? 'text-slate-300' : 'text-slate-800'} truncate`}>
                       {player.id === currentPlayerId
                         ? "???"
-                        : player.forbiddenWord.toUpperCase()}
+                        : player.displayWord.toUpperCase()}
                     </p>
                   </div>
 
@@ -236,7 +277,7 @@ export default function GameplayArena({
                         {player.name}
                       </p>
                       <p className="text-xs font-black text-rose-500 uppercase mt-0.5 truncate">
-                        Said: {player.forbiddenWord}
+                        Said: {player.displayWord}
                       </p>
                     </div>
                   </CardContent>

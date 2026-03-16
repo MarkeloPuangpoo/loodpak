@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { createRoom, getRoomByCode } from "@/lib/roomActions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sparkles, Users, Zap, Gamepad2 } from "lucide-react";
@@ -9,16 +10,42 @@ import { Sparkles, Users, Zap, Gamepad2 } from "lucide-react";
 export default function Home() {
   const router = useRouter();
   const [roomCode, setRoomCode] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
 
-  const handleCreateRoom = () => {
-    const newRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
-    router.push(`/room/${newRoomId}`);
+  const handleCreateRoom = async () => {
+    setIsCreating(true);
+    setError(null);
+    const newRoomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    try {
+      await createRoom(newRoomCode);
+      router.push(`/room/${newRoomCode}`);
+    } catch (err: any) {
+      setError(err.message || "Could not create room. Please try again.");
+    } finally {
+      setIsCreating(false);
+    }
   };
 
-  const handleJoinRoom = (e: React.FormEvent) => {
+  const handleJoinRoom = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (roomCode.trim()) {
-      router.push(`/room/${roomCode.trim().toUpperCase()}`);
+    const code = roomCode.trim().toUpperCase();
+    if (!code) return;
+
+    setIsJoining(true);
+    setError(null);
+    try {
+      const room = await getRoomByCode(code);
+      if (!room) {
+        setError("Room not found. Please check your code.");
+        return;
+      }
+      router.push(`/room/${code}`);
+    } catch (err: any) {
+      setError(err.message || "Failed to join room.");
+    } finally {
+      setIsJoining(false);
     }
   };
 
@@ -52,14 +79,20 @@ export default function Home() {
 
         {/* --- MAIN CARD --- */}
         <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] border-[3px] border-indigo-950 shadow-[0px_16px_0px_0px_#1e1b4b] p-8 md:p-10 space-y-8 animate-bounce-in" style={{animationDelay: '0.2s'}}>
+          {error && (
+            <div className="p-4 bg-rose-50 border-2 border-rose-300 rounded-xl text-rose-700 font-bold text-sm text-center">
+              {error}
+            </div>
+          )}
           <div className="space-y-6">
             <Button
               onClick={handleCreateRoom}
               size="xl"
               className="w-full text-lg shadow-[0px_8px_0px_0px_#1e1b4b] hover:shadow-[0px_4px_0px_0px_#1e1b4b] hover:translate-y-[4px]"
+              disabled={isCreating}
             >
               <Sparkles className="mr-2 h-6 w-6" />
-              Create New Room
+              {isCreating ? "Creating..." : "Create New Room"}
             </Button>
 
             <div className="relative py-2">
@@ -94,9 +127,9 @@ export default function Home() {
                 size="xl"
                 variant="secondary"
                 className="w-full text-lg shadow-[0px_8px_0px_0px_#78350f] hover:shadow-[0px_4px_0px_0px_#78350f] hover:translate-y-[4px]"
-                disabled={!roomCode.trim()}
+                disabled={!roomCode.trim() || isJoining}
               >
-                Join Room
+                {isJoining ? "Joining..." : "Join Room"}
               </Button>
             </form>
           </div>

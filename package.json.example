@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@livekit/components-react": "^2.0.0",
+    "livekit-client": "^2.0.0"
+  },
+  "devDependencies": {
+    "livekit-server-sdk": "^2.0.0"
+  }
+}
