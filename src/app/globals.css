@@ -1,26 +1,168 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 210 40% 98%;
+  --foreground: 233 47% 19%;
+  --card: 0 0% 100%;
+  --card-foreground: 233 47% 19%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 233 47% 19%;
+  --primary: 254 73% 57%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 35 92% 56%;
+  --secondary-foreground: 43 96% 14%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 346 87% 53%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 254 73% 57%;
+  --radius: 1.5rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Smoother and more elegant bounce-in 
+*/
+@keyframes bounce-in {
+  0% {
+    transform: scale(0.85) translateY(10px);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.02) translateY(-2px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
   }
 }
 
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-3px) rotate(-1deg);
+  }
+  75% {
+    transform: translateX(3px) rotate(1deg);
+  }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-wiggle {
+  animation: wiggle 0.6s ease-in-out;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-pop {
+  animation: pop 0.3s ease-in-out;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Modern Glassy Comic Utilities 
+  Replacing harsh #000 with rich #1e1b4b (indigo-950)
+*/
+.comic-border {
+  border: 3px solid #1e1b4b;
+  box-shadow: 0px 6px 0px 0px #1e1b4b;
+}
+
+.comic-border-sm {
+  border: 2px solid #1e1b4b;
+  box-shadow: 0px 4px 0px 0px #1e1b4b;
+}
+
+.comic-shadow {
+  box-shadow: 0px 8px 0px 0px #1e1b4b;
+}
+
+.comic-shadow-lg {
+  box-shadow: 0px 16px 0px 0px #1e1b4b;
+}
+
+.comic-text-shadow {
+  text-shadow: 2px 2px 0px #1e1b4b;
+}
+
+/* Creates a beautiful dark outline for text */
+.comic-text-outline {
+  text-shadow: 
+    -2px -2px 0 #1e1b4b,
+    2px -2px 0 #1e1b4b,
+    -2px 2px 0 #1e1b4b,
+    2px 2px 0 #1e1b4b,
+    0px 4px 0px rgba(30, 27, 75, 0.5); /* Adds a slight drop shadow to the outline */
+}
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --font-sans: var(--font-outfit);
+  --font-mono: var(--font-mono);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
