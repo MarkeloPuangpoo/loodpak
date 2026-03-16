@@ -2,18 +2,14 @@
 
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:54321');
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder-url.supabase.co';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy-key-for-build';
 
-if (process.env.NODE_ENV === 'production' && (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)) {
-  // Only throw when NOT in build process if we want to be strict, but Next.js build
-  // often runs with NODE_ENV=production. The error log shows it's failing during
-  // "Generating static pages".
-  
-  // A better way to detect build phase in Next.js is not officially through process.env.NEXT_PHASE 
-  // in all files, but we can check if we are in a build environment.
-  // Actually, Vercel build environment doesn't have these vars unless configured.
-  // Let's just make it NOT throw during build.
+if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  // In production (Vercel runtime), we want to know if the URL is missing.
+  // We don't throw an error here anymore to avoid build failures,
+  // but we should probably log a warning if it's the actual production environment.
+  console.warn('Warning: NEXT_PUBLIC_SUPABASE_URL is not defined.');
 }
 
 // Validate URL format
