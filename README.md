@@ -69,19 +69,139 @@ Open [http://localhost:3000](http://localhost:3000) to start playing!
 6. **Elimination** - Click "GOTCHA!" when someone says their word
 7. **Voice Chat** - Talk with other players during gameplay (auto-muted when eliminated)
 
-## 🏗️ Architecture
+## 🏗️ Technical Architecture
 
-### Frontend Stack
-- **Next.js 15** - React framework with App Router
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
-- **Lucide React** - Icons
-- **Shadcn/ui** - UI components
+<div align="center">
 
-### Backend Services
-- **Supabase** - Database & Realtime subscriptions
-- **LiveKit** - WebRTC voice chat
-- **Next.js API Routes** - Token generation
+```mermaid
+graph TB
+    subgraph "Client Layer"
+        A[Next.js Frontend]
+        B[React Components]
+        C[LiveKit Client]
+    end
+    
+    subgraph "Backend Services"
+        D[Supabase Database]
+        E[LiveKit Server]
+        F[Next.js API Routes]
+    end
+    
+    subgraph "Real-time Infrastructure"
+        G[Supabase Realtime]
+        H[LiveKit WebRTC]
+    end
+    
+    A --> D
+    A --> F
+    B --> C
+    C --> E
+    F --> E
+    D --> G
+    E --> H
+    G --> A
+    H --> A
+```
+
+</div>
+
+### System Architecture
+
+#### Frontend Architecture
+```mermaid
+graph LR
+    subgraph "React Components"
+        A[RoomPage]
+        B[GameplayArena]
+        C[DraftingModal]
+        D[VoiceChat]
+    end
+    
+    subgraph "Custom Hooks"
+        E[useRoom]
+        F[useMicrophoneControl]
+    end
+    
+    subgraph "State Management"
+        G[Supabase Realtime]
+        H[LocalStorage]
+        I[React State]
+    end
+    
+    A --> E
+    B --> F
+    E --> G
+    E --> I
+    F --> G
+    A --> H
+```
+
+#### Data Flow Architecture
+```mermaid
+sequenceDiagram
+    participant P1 as Player 1
+    participant P2 as Player 2
+    participant DB as Supabase
+    participant RT as Realtime
+    participant VC as LiveKit
+    
+    P1->>DB: Submit Word
+    DB->>RT: Broadcast Update
+    RT->>P2: Real-time Sync
+    P2->>P2: UI Update
+    
+    Note over P1,VC: Voice Chat Flow
+    P1->>VC: Join Room
+    VC->>P2: Audio Stream
+    P2->>VC: Audio Stream
+    VC->>P1: Audio Stream
+    
+    P1->>DB: Eliminate Player
+    DB->>RT: Broadcast Update
+    RT->>P2: Auto-mute Voice
+```
+
+#### Database Architecture
+```mermaid
+erDiagram
+    ROOMS {
+        string id PK
+        string code UK
+        string status
+        timestamp created_at
+    }
+    
+    PLAYERS {
+        string id PK
+        string room_id FK
+        string name
+        string submitted_word
+        string assigned_word
+        boolean is_eliminated
+        timestamp created_at
+    }
+    
+    ROOMS ||--o{ PLAYERS : contains
+```
+
+### Technology Stack
+
+#### Frontend Stack
+- **Next.js 16** - React framework with App Router
+- **TypeScript** - Full type safety
+- **Tailwind CSS** - Utility-first styling
+- **Lucide React** - Icon library
+- **Shadcn/ui** - Component library
+
+#### Backend Services
+- **Supabase** - PostgreSQL database + Realtime
+- **LiveKit Cloud** - WebRTC voice infrastructure
+- **Next.js API Routes** - Server-side logic
+
+#### Real-time Infrastructure
+- **Supabase Realtime** - Database change subscriptions
+- **LiveKit WebRTC** - Low-latency audio streaming
+- **WebSocket Connections** - Persistent communication
 
 ### Key Components
 
@@ -96,6 +216,12 @@ players (id, room_id, name, submitted_word, assigned_word, is_eliminated, create
 - **Derangement Algorithm** - Ensures fair word assignment (no one gets their own word)
 - **Voice Chat** - LiveKit WebRTC with auto-mute on elimination
 - **State Management** - React hooks with persistent localStorage
+
+#### Security & Performance
+- **JWT Tokens** - LiveKit authentication
+- **Row Level Security** - Supabase data protection
+- **Optimistic Updates** - Instant UI feedback
+- **Connection Pooling** - Efficient database access
 
 ## 📁 Project Structure
 
