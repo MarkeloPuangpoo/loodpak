@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Outfit, JetBrains_Mono } from "next/font/google";
+import { Anuphan, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-// ใช้ Outfit เป็นฟอนต์หลัก ให้ความรู้สึก Modern, Geometric และ Friendly
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
+// ใช้ Anuphan เป็นฟอนต์หลัก ให้ความรู้สึก Modern และรองรับภาษาไทยได้สวยงาม
+const anuphan = Anuphan({
+  variable: "--font-anuphan",
+  subsets: ["latin", "thai"],
   display: 'swap',
 });
 
@@ -17,8 +17,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lood-Pak.io | Premium Party Game",
-  description: "A real-time multiplayer party game where you try to catch others saying their forbidden words! Modern and gamified.",
+  title: "หลุดปาก (Lood-Pak) | เกมปาร์ตี้สุดเริด",
+  description: "เกมปาร์ตี้มัลติเพลเยอร์แบบเรียลไทม์ที่คุณต้องจับผิดเพื่อนตอนพูดคำต้องห้าม! สนุก เร้าใจ และทันสมัย",
 };
 
 export default function RootLayout({
@@ -27,9 +27,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="th">
       <body
-        className={`${outfit.variable} ${jetbrainsMono.variable} font-sans antialiased bg-slate-50`}
+        className={`${anuphan.variable} ${jetbrainsMono.variable} font-sans antialiased bg-slate-50`}
       >
         {children}
       </body>

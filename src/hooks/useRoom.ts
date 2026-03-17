@@ -179,5 +179,6 @@ export function useRoom(roomCode: string) {
     eliminatePlayer,
     submitWord,
     assignWords,
+    refreshPlayers: () => room && fetchPlayers(room.id),
   };
 }

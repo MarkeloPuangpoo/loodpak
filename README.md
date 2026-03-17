@@ -1,88 +1,40 @@
-# 🎮 Loodpak
+# 🎭 หลุดปาก (Loodpak) — The Forbidden Word Social Game
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-Realtime-green?style=for-the-badge&logo=supabase)](https://supabase.com/)
-[![LiveKit](https://img.shields.io/badge/LiveKit-WebRTC-brightgreen?style=for-the-badge&logo=livekit)](https://livekit.io/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![Next.js 16](https://img.shields.io/badge/Next.js-16.1-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![React 19](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
+[![Tailwind CSS 4](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![Supabase Realtime](https://img.shields.io/badge/Supabase-Realtime-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com/)
+[![LiveKit WebRTC](https://img.shields.io/badge/LiveKit-WebRTC-brightgreen?style=for-the-badge&logo=livekit)](https://livekit.io/)
+[![TypeScript 5](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 
-**Loodpak** is a high-performance, real-time voice chat social game designed for modern browsers. Players are challenged to engage in conversation while avoiding specific "forbidden words" assigned to them. The platform leverages WebRTC for low-latency voice communication and Supabase for instantaneous state synchronization across all participants.
-
----
-
-## ✨ Key Features
-
-- **⚡ Real-time Synchronization**: Powered by Supabase Realtime for sub-second updates across all game clients.
-- **🎙️ Low-Latency Voice Chat**: Integrated LiveKit WebRTC infrastructure ensures crystal-clear, real-time communication.
-- **🧠 Intelligent Word Assignment**: Implements a robust **Derangement Algorithm** to guarantee equitable word distribution without self-assignment.
-- **🔇 Automated Orchestration**: Features smart game state management, including auto-muting of eliminated participants to preserve game integrity.
-- **🎨 Modern UI/UX**: A responsive, high-fidelity interface built with Next.js, Tailwind CSS, and Shadcn/ui.
-- **🛡️ Type-Safe Architecture**: End-to-end TypeScript implementation for maximum reliability and developer productivity.
+**หลุดปาก (Loodpak)** is a high-octane, real-time voice chat social game where conversation is your weapon—and your biggest weakness. Players must engage in natural dialogue while avoiding a secret "forbidden word" assigned to them by their rivals. 
 
 ---
 
-## 🚀 Quick Start
+## ✨ Premium Features
 
-### Prerequisites
-
-| Tool | Minimum Version |
-| :--- | :--- |
-| **Node.js** | v18.17.0+ |
-| **npm** | v9.0.0+ |
-| **Accounts** | Supabase, LiveKit Cloud (Free tier compatible) |
-
-### Installation
-
-1.  **Clone the Repository**
-    ```bash
-    git clone <your-repo-url>
-    cd loodpak
-    ```
-
-2.  **Install Dependencies**
-    ```bash
-    npm install
-    ```
-
-3.  **Infrastructure Configuration**
-    - **Supabase**: Initialize a new project and execute `setup.sql` in the SQL Editor. Enable **Realtime** for `rooms` and `players` tables.
-    - **LiveKit**: Provision a project at [LiveKit Cloud](https://cloud.livekit.io/) to obtain your WebSocket URL and API credentials.
-
-4.  **Environment Setup**
-    ```bash
-    cp .env.example .env.local
-    ```
-    Populate `.env.local` with your service credentials:
-    ```env
-    NEXT_PUBLIC_SUPABASE_URL=your_project_url
-    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-    NEXT_PUBLIC_LIVEKIT_URL=wss://your-project.livekit.cloud
-    LIVEKIT_API_KEY=your_api_key
-    LIVEKIT_API_SECRET=your_api_secret
-    ```
-
-5.  **Launch Development Environment**
-    ```bash
-    npm run dev
-    ```
-    Access the application at `http://localhost:3000`.
+- **🎙️ Crystal Clear Voice Chat**: Sub-millisecond latency voice communication powered by LiveKit WebRTC infrastructure.
+- **⚡ Instantaneous Sync**: Every "GOTCHA!" and word submission is broadcasted in real-time across all clients using Supabase CDC.
+- **🧠 Fair-Play Algorithm**: Implements a robust **Derangement Shuffle** to ensure no player ever receives their own word.
+- **🔇 Smart Orchestration**: Automated game state management, including auto-muting for eliminated players.
+- **🎨 Comic-Style UI**: A vibrant, high-fidelity interface with fluid animations and custom "comic-shadow" effects.
 
 ---
 
-## 🎮 Gameplay Mechanics
+## 🎮 How to Play
 
-1.  **Room Creation**: A host initializes a session, generating a unique access code.
-2.  **Participant Entry**: Players join using the provided room code and their preferred display name.
-3.  **Submission Phase**: Every player contributes a "forbidden word" to the pool.
-4.  **The Derangement**: Upon starting, the system distributes words such that `assigned_word[i] ≠ submitted_word[i]`.
-5.  **Social Engineering**: Participants must talk naturally while attempting to trick others into saying their specific forbidden word.
-6.  **Elimination**: When a player is caught, the observer triggers "GOTCHA!", instantly eliminating and muting them.
+1. **The Lobby**: Create/Join a room with a 6-character code.
+2. **The Draft**: Every player submits one "forbidden word" for someone else.
+3. **The Assignment**: The system shuffles words. You see everyone's word except your own (`???`).
+4. **The Game**: Talk naturally. Try to bait others into saying their word.
+5. **GOTCHA!**: If someone slips up, hit the button! Last survivor wins.
 
 ---
 
 ## 🏗️ Technical Architecture
 
-### System Infrastructure
+### 1. System Infrastructure
+Loodpak uses a "State-as-a-Service" model where Supabase acts as the single source of truth for game state, and LiveKit manages high-concurrency media streams.
 
 ```mermaid
 graph TD
@@ -90,9 +42,9 @@ graph TD
     classDef logic fill:#7c3aed,stroke:#fff,stroke-width:2px,color:#fff;
     classDef infrastructure fill:#10b981,stroke:#fff,stroke-width:2px,color:#fff;
 
-    subgraph "Application Layer (Next.js)"
+    subgraph "Application Layer (Next.js 16)"
         A[App Router]:::frontend
-        B[Real-time Hooks]:::logic
+        B[useRoom Hook]:::logic
         C[LiveKit Components]:::frontend
     end
     
@@ -103,11 +55,11 @@ graph TD
     end
     
     subgraph "Communication Fabric"
-        G[Postgres CDC / Realtime]:::infrastructure
+        G[Postgres Realtime]:::infrastructure
         H[WebRTC Voice/Data]:::logic
     end
     
-    A -->|State Pull| D
+    A -->|Action| D
     B -->|Subscribe| G
     G -->|Broadcast| B
     C -->|Stream| E
@@ -116,26 +68,27 @@ graph TD
     F -->|Auth/Logic| E
 ```
 
-### Lifecycle & State Transitions
+### 2. Game Lifecycle (State Transitions)
+The game moves through strictly controlled states to ensure data integrity during word assignment and elimination.
 
 ```mermaid
 stateDiagram-v2
     direction LR
     [*] --> Lobby: Create Room
     Lobby --> Drafting: Start Game
-    Drafting --> Playing: Words Assigned
+    Drafting --> Playing: Words Assigned (Derangement)
     Playing --> Finished: Winner Decided
     Finished --> Lobby: Reset Room
     
     state Lobby {
         [*] --> Waiting
-        Waiting --> Ready: N > 2 Players
+        Waiting --> Ready: N > 1 Player
     }
     
     state Drafting {
         [*] --> Submitting
-        Submitting --> Assigning: All Submissions Received
-        Assigning --> [*]: Derangement Success
+        Submitting --> Assigning: All Words In
+        Assigning --> [*]: Success
     }
     
     state Playing {
@@ -145,38 +98,32 @@ stateDiagram-v2
     }
 ```
 
-### Data Flow Sequence
+### 3. Real-time Data Flow (Sequence)
+How the "GOTCHA!" moment works across the stack:
 
 ```mermaid
 sequenceDiagram
     autonumber
-    participant P as Player (Client)
+    participant P as Player A (Observer)
     participant S as Supabase (State)
     participant L as LiveKit (Voice)
+    participant T as Player B (Target)
     
-    Note over P,L: Game Initiation
-    P->>S: Submit Forbidden Word
-    S-->>P: Broadcast Update (Real-time)
+    P->>S: Click "GOTCHA!" (Update is_eliminated: true)
+    S-->>P: Broadcast Sync (Real-time)
+    S-->>T: Broadcast Sync (Real-time)
     
-    Note over P,L: Word Assignment
-    S->>S: Execute Derangement Algorithm
-    S-->>P: Assigned Word Distributed
-    
-    Note over P,L: Voice Interaction
-    P->>L: Connect to Voice Room
-    L-->>P: Multi-user Audio Stream
-    
-    Note over P,L: Elimination
-    P->>S: Trigger "GOTCHA!"
-    S-->>P: Sync Elimination State
-    S-->>L: Request Participant Mute
+    Note over T: Client recognizes elimination
+    T->>L: Close Mic Stream
+    L-->>P: Audio Stream Terminated for T
 ```
 
-### Database Entity Relationship
+### 4. Database Entity Relationship (ERD)
+Our schema is optimized for Postgres replication and cascading deletions.
 
 ```mermaid
 erDiagram
-    ROOMS ||--o{ PLAYERS : "hosts"
+    ROOMS ||--o{ PLAYERS : "contains"
     
     ROOMS {
         uuid id PK
@@ -200,55 +147,34 @@ erDiagram
 
 ## 🛠️ Technology Stack
 
-| Layer | Technologies |
+| Layer | Technology |
 | :--- | :--- |
-| **Frontend** | React 19, Next.js 15 (App Router), TypeScript |
-| **Styling** | Tailwind CSS 4, Radix UI, Lucide Icons |
-| **Database** | Supabase (PostgreSQL + Realtime CDC) |
-| **Communications** | LiveKit (WebRTC / SFU) |
-| **Logic** | Custom Hooks, Derangement Algorithm |
+| **Frontend** | React 19 + Next.js 16 (App Router) |
+| **Styling** | Tailwind CSS 4.0 + Lucide Icons |
+| **Realtime** | Supabase (Postgres + Realtime CDC) |
+| **Voice** | LiveKit (SFU / WebRTC) |
+| **Logic** | Derangement Shuffle Algorithm |
 
 ---
 
-## 📁 Project Structure
+## 🚀 Quick Start
 
-```text
-src/
-├── app/                  # Application routing and API definitions
-│   └── api/livekit/      # LiveKit authentication logic
-├── components/           # UI and Functional components
-│   ├── ui/               # Design system primitives (Shadcn)
-│   ├── GameplayArena.tsx # Core game loop container
-│   └── VoiceChat.tsx     # WebRTC audio implementation
-├── hooks/                # Specialized logic (useRoom, etc.)
-├── lib/                  # Core utility functions and clients
-│   ├── derangement.ts    # Mathematical word distribution
-│   └── roomActions.ts    # Supabase service layer
-└── __tests__/            # Algorithmic validation suite
-```
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-1.  Fork the Project
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4.  Push to the Branch (`git checkout -p origin feature/AmazingFeature`)
-5.  Open a Pull Request
+1. **Install**
+   ```bash
+   npm install
+   ```
+2. **Environment**
+   Setup `.env.local` with your **Supabase** and **LiveKit** credentials.
+3. **Database**
+   Run `setup.sql` in your Supabase SQL editor.
+4. **Run**
+   ```bash
+   npm run dev
+   ```
 
 ---
 
 ## 📄 License
+Distributed under the MIT License.
 
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
-## 🙏 Credits
-
-- **Infrastructure**: [Supabase](https://supabase.com), [LiveKit](https://livekit.io)
-- **Framework**: [Next.js](https://nextjs.org)
-- **UI Components**: [Shadcn/UI](https://ui.shadcn.com)
+<p align="center">Made with ❤️ for party lovers everywhere.</p>

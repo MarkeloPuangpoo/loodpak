@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { createRoom, getRoomByCode } from "@/lib/roomActions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sparkles, Users, Zap, Gamepad2 } from "lucide-react";
+import { Sparkles, Users, Zap, Gamepad2, BookOpen, Loader2, ArrowRight } from "lucide-react";
+import RulesModal from "@/components/RulesModal";
 
 export default function Home() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function Home() {
       await createRoom(newRoomCode);
       router.push(`/room/${newRoomCode}`);
     } catch (err: any) {
-      setError(err.message || "Could not create room. Please try again.");
+      setError(err.message || "ไม่สามารถสร้างห้องได้ กรุณาลองใหม่อีกครั้ง");
     } finally {
       setIsCreating(false);
     }
@@ -38,12 +39,12 @@ export default function Home() {
     try {
       const room = await getRoomByCode(code);
       if (!room) {
-        setError("Room not found. Please check your code.");
+        setError("ไม่พบห้องนี้ กรุณาตรวจสอบรหัสอีกครั้ง");
         return;
       }
       router.push(`/room/${code}`);
     } catch (err: any) {
-      setError(err.message || "Failed to join room.");
+      setError(err.message || "ไม่สามารถเข้าห้องได้");
     } finally {
       setIsJoining(false);
     }
@@ -51,118 +52,162 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-rose-100 flex items-center justify-center p-4 md:p-8 relative overflow-hidden font-sans">
+
       {/* Premium Ambient Background Elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <Sparkles className="absolute top-20 left-20 w-16 h-16 text-indigo-300/40 animate-pulse" />
-        <Zap className="absolute top-32 right-24 w-20 h-20 text-purple-300/40 transform rotate-12 animate-float" style={{animationDelay: '0.5s'}} />
-        <Gamepad2 className="absolute bottom-24 left-24 w-24 h-24 text-rose-300/40 transform -rotate-12 animate-float" style={{animationDelay: '1s'}} />
-        <div className="absolute bottom-16 right-32 text-6xl opacity-30 animate-float" style={{animationDelay: '1.5s'}}>🎭</div>
+        <Sparkles className="absolute top-20 left-20 w-20 h-20 text-indigo-300/40 animate-pulse-glow" />
+        <Zap className="absolute top-32 right-24 w-24 h-24 text-purple-300/40 transform rotate-12 animate-float-rotate" style={{ animationDelay: '0.5s' }} />
+        <Gamepad2 className="absolute bottom-24 left-24 w-32 h-32 text-rose-300/40 transform -rotate-12 animate-float" style={{ animationDelay: '1s' }} />
+        <div className="absolute bottom-16 right-32 text-7xl opacity-30 animate-float" style={{ animationDelay: '1.5s' }}>🎭</div>
       </div>
 
       <div className="w-full max-w-lg relative z-10">
+
         {/* --- HERO SECTION --- */}
-        <div className="text-center mb-10 animate-bounce-in">
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[2rem] mb-6 border-[3px] border-indigo-950 shadow-[0px_8px_0px_0px_#1e1b4b] transform rotate-3 hover:rotate-0 hover:-translate-y-2 transition-all duration-300">
-            <Zap className="w-12 h-12 text-white" fill="currentColor" strokeWidth={2} />
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-28 h-28 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[2.5rem] mb-8 comic-shadow-lg transform rotate-3 hover:rotate-0 hover:-translate-y-2 transition-all duration-500 animate-bounce-in border-[5px] border-indigo-950">
+            <Zap className="w-14 h-14 text-white animate-tilt-shake delay-300" fill="currentColor" strokeWidth={2} />
           </div>
-          <h1 className="text-6xl md:text-7xl font-black text-white mb-4 tracking-tight drop-shadow-[0_4px_4px_rgba(30,27,75,0.3)] comic-text-outline transform -rotate-1">
-            LOOD-PAK
-          </h1>
-          <div className="relative inline-block">
-            <div className="bg-white/90 backdrop-blur-sm border-[3px] border-indigo-950 rounded-full px-6 py-2 shadow-[0px_4px_0px_0px_#1e1b4b] transform rotate-1">
-              <p className="text-sm md:text-base text-indigo-950 font-black uppercase tracking-wider flex items-center gap-2">
-                <span className="text-xl">🎯</span> Forbidden Words Party
+          <div className="relative inline-block animate-slide-up delay-75">
+            <h1 className="text-7xl md:text-8xl font-black text-white mb-6 tracking-tighter comic-text-outline transform -rotate-2 hover:rotate-0 transition-transform duration-300">
+              หลุดปาก
+            </h1>
+            <Sparkles className="absolute -top-4 -right-8 w-10 h-10 text-amber-400 animate-spin-slow" />
+          </div>
+
+          <div className="relative inline-block animate-slide-up delay-150">
+            <div className="bg-white/95 backdrop-blur-md border-[4px] border-indigo-950 rounded-full px-8 py-2.5 comic-shadow transform rotate-1 hover:rotate-0 transition-transform hover-lift">
+              <p className="text-base md:text-lg text-indigo-950 font-black uppercase tracking-wider flex items-center gap-3">
+                <span className="text-2xl animate-bounce">🎯</span> ปาร์ตี้คำต้องห้ามสุดเริด
               </p>
             </div>
           </div>
         </div>
 
         {/* --- MAIN CARD --- */}
-        <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] border-[3px] border-indigo-950 shadow-[0px_16px_0px_0px_#1e1b4b] p-8 md:p-10 space-y-8 animate-bounce-in" style={{animationDelay: '0.2s'}}>
+        <div className="bg-white/95 backdrop-blur-xl rounded-[3rem] border-[5px] border-indigo-950 shadow-[0px_20px_0px_0px_#1e1b4b] p-8 md:p-12 space-y-8 animate-pop-in delay-200 overflow-hidden relative group">
+          <div className="absolute inset-0 bg-gradient-to-tr from-indigo-50/50 to-transparent pointer-events-none"></div>
+
           {error && (
-            <div className="p-4 bg-rose-50 border-2 border-rose-300 rounded-xl text-rose-700 font-bold text-sm text-center">
+            <div className="p-4 bg-rose-50 border-[3px] border-rose-300 rounded-2xl text-rose-700 font-black text-sm text-center animate-tilt-shake shadow-inner">
               {error}
             </div>
           )}
-          <div className="space-y-6">
-            <Button
-              onClick={handleCreateRoom}
-              size="xl"
-              className="w-full text-lg shadow-[0px_8px_0px_0px_#1e1b4b] hover:shadow-[0px_4px_0px_0px_#1e1b4b] hover:translate-y-[4px]"
-              disabled={isCreating}
-            >
-              <Sparkles className="mr-2 h-6 w-6" />
-              {isCreating ? "Creating..." : "Create New Room"}
-            </Button>
 
-            <div className="relative py-2">
+          <div className="space-y-8 relative z-10">
+            {/* Create Room Button */}
+            <div className="animate-slide-up delay-300">
+              <Button
+                onClick={handleCreateRoom}
+                size="xl"
+                className="w-full text-xl h-20 rounded-[1.5rem] group hover:scale-[1.02] active:scale-95 transition-all"
+                disabled={isCreating}
+              >
+                {isCreating ? (
+                  <>
+                    <Loader2 className="mr-3 h-7 w-7 animate-spin" />
+                    กำลังสร้างห้อง...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-3 h-7 w-7 group-hover:animate-pulse" />
+                    สร้างห้องใหม่
+                    <ArrowRight className="ml-2 w-6 h-6 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {/* Divider */}
+            <div className="relative py-2 animate-slide-up delay-300">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t-[3px] border-indigo-100 border-dashed" />
+                <span className="w-full border-t-[4px] border-indigo-100 border-dashed" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-indigo-50 border-2 border-indigo-200 px-4 py-1.5 text-indigo-500 font-black rounded-full shadow-sm tracking-widest">
-                  OR
+                <span className="bg-indigo-50 border-[3px] border-indigo-200 px-5 py-2 text-indigo-500 font-black rounded-full shadow-sm tracking-widest flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></div>
+                  หรือ
+                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse delay-75"></div>
                 </span>
               </div>
             </div>
 
-            <form onSubmit={handleJoinRoom} className="space-y-4">
-              <div className="space-y-2">
+            {/* Join Room Form */}
+            <form onSubmit={handleJoinRoom} className="space-y-5 animate-slide-up delay-500">
+              <div className="space-y-3">
                 <label htmlFor="roomCode" className="text-sm font-black text-indigo-950 uppercase tracking-wide ml-2 flex items-center gap-2">
-                  <Users className="w-4 h-4 text-indigo-500" />
-                  Join with Code
+                  <Users className="w-5 h-5 text-indigo-500 animate-wiggle" />
+                  เข้าร่วมด้วยรหัสห้อง
                 </label>
-                <Input
-                  id="roomCode"
-                  type="text"
-                  placeholder="e.g. A1B2C3"
-                  value={roomCode}
-                  onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-                  className="text-center text-2xl h-16 font-mono uppercase tracking-[0.5em] bg-white border-indigo-200 shadow-inner focus-visible:border-indigo-500"
-                  maxLength={6}
-                />
+                <div className="relative group/input">
+                  <Input
+                    id="roomCode"
+                    type="text"
+                    placeholder="ใส่รหัสห้องที่นี่"
+                    value={roomCode}
+                    onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+                    className="text-center text-3xl h-20 font-mono font-black uppercase tracking-[0.4em] bg-slate-50 border-[4px] border-slate-200 shadow-inner focus-visible:border-indigo-500 transition-all rounded-[1.5rem]"
+                    maxLength={6}
+                    autoComplete="off"
+                  />
+                  <div className="absolute inset-0 rounded-[1.5rem] pointer-events-none group-focus-within/input:animate-shimmer opacity-20"></div>
+                </div>
               </div>
               <Button
                 type="submit"
                 size="xl"
                 variant="secondary"
-                className="w-full text-lg shadow-[0px_8px_0px_0px_#78350f] hover:shadow-[0px_4px_0px_0px_#78350f] hover:translate-y-[4px]"
+                className="w-full text-xl h-[4.5rem] rounded-2.5xl group hover:scale-[1.02] active:scale-95 transition-all"
                 disabled={!roomCode.trim() || isJoining}
               >
-                {isJoining ? "Joining..." : "Join Room"}
+                {isJoining ? (
+                  <Loader2 className="h-7 w-7 animate-spin" />
+                ) : (
+                  <>
+                    เข้าห้องเลย!
+                    <Zap className="ml-2 w-5 h-5 group-hover:scale-125 group-hover:rotate-12 transition-transform" fill="currentColor" />
+                  </>
+                )}
               </Button>
             </form>
           </div>
 
-          {/* --- HOW TO PLAY --- */}
-          <div className="pt-6 border-t-[3px] border-indigo-100 border-dashed">
-            <div className="bg-indigo-50/80 border-2 border-indigo-100 rounded-2xl p-5 relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-3 opacity-10 pointer-events-none">
-                <div className="text-6xl">💡</div>
+          {/* --- HOW TO PLAY BANNERS --- */}
+          <div className="pt-8 border-t-[4px] border-indigo-100 border-dashed animate-slide-up delay-500 relative z-10">
+            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border-[3px] border-indigo-200 rounded-[1.5rem] p-5 relative overflow-hidden group hover:shadow-md transition-all">
+              <div className="absolute top-0 right-0 p-3 opacity-10 pointer-events-none group-hover:scale-125 group-hover:-rotate-12 transition-transform duration-500">
+                <div className="text-7xl">💡</div>
               </div>
-              <div className="relative z-10 flex items-start gap-4 text-sm">
-                <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 border-2 border-indigo-200">
-                  <span className="text-xl">💡</span>
+              <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center flex-shrink-0 border-[3px] border-indigo-200 comic-shadow-sm animate-float">
+                    <span className="text-2xl animate-pulse">💡</span>
+                  </div>
+                  <div>
+                    <p className="font-black text-indigo-950 text-base uppercase tracking-wide mb-0.5">เล่นยังไงให้รอด?</p>
+                    <p className="font-bold text-slate-500 text-sm">
+                      ตั้งคำแกล้งเพื่อน อย่าให้เขารู้นะ!
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-black text-indigo-950 mb-1.5 uppercase tracking-wide">How to play</p>
-                  <p className="leading-relaxed font-semibold text-slate-600">
-                    Set a forbidden word for someone. Talk via voice chat. Catch them saying their word and hit <span className="inline-block bg-rose-500 text-white px-2 py-0.5 rounded-md border border-rose-700 font-black text-xs transform -rotate-2">GOTCHA!</span> to eliminate them!
-                  </p>
-                </div>
+                <RulesModal trigger={
+                  <Button variant="outline" size="sm" className="rounded-full font-black text-xs uppercase tracking-wider h-12 px-6 border-[3px] border-indigo-950 bg-white hover:bg-indigo-50 transition-all hover-lift active-press flex-shrink-0 w-full sm:w-auto">
+                    ดูวิธีเล่น <BookOpen className="ml-2 w-4 h-4" />
+                  </Button>
+                } />
               </div>
             </div>
           </div>
         </div>
 
         {/* --- FOOTER --- */}
-        <div className="text-center mt-8 animate-bounce-in" style={{animationDelay: '0.4s'}}>
-          <div className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-md border-2 border-indigo-200/50 rounded-full px-6 py-2">
-            <Sparkles className="w-4 h-4 text-indigo-400" />
-            <p className="text-sm font-bold text-indigo-900/70 uppercase tracking-wider">
-              Made for Epic Parties
+        <div className="text-center mt-12 animate-slide-up delay-500">
+          <div className="inline-flex items-center gap-3 bg-white/60 backdrop-blur-md border-[3px] border-indigo-200/50 rounded-full px-8 py-3 hover:bg-white/80 transition-colors cursor-default hover-lift">
+            <Sparkles className="w-5 h-5 text-indigo-500 animate-pulse" />
+            <p className="text-sm font-black text-indigo-900/80 uppercase tracking-widest">
+              ปาร์ตี้เกมคำต้องห้าม
             </p>
-            <Sparkles className="w-4 h-4 text-indigo-400" />
+            <Sparkles className="w-5 h-5 text-indigo-500 animate-pulse delay-75" />
           </div>
         </div>
       </div>

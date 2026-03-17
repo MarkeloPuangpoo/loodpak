@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Send, CheckCircle2, Sparkles } from "lucide-react";
+import { Loader2, Send, CheckCircle2, Sparkles, Zap, Lightbulb } from "lucide-react";
 import { Player } from "@/hooks/useRoom";
 
 type DraftingModalProps = {
@@ -27,9 +27,6 @@ export default function DraftingModal({
   const [forbiddenWord, setForbiddenWord] = useState("");
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
-  const currentPlayer = players.find((p) => p.id === currentPlayerId);
-  const otherPlayers = players.filter((p) => p.id !== currentPlayerId);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!forbiddenWord.trim()) return;
@@ -42,131 +39,138 @@ export default function DraftingModal({
 
   return (
     <Dialog open={true}>
-      <DialogContent 
-        className="sm:max-w-md bg-white/95 backdrop-blur-xl border-[3px] border-indigo-950 rounded-[2rem] shadow-[8px_8px_0px_0px_#4f46e5] p-6 sm:p-8" 
+      {/* ใช้ comic-shadow-lg เพื่อให้หน้าต่างดูลอยขึ้นมาจากพื้นหลัง */}
+      <DialogContent
+        className="sm:max-w-md comic-shadow-lg"
         onPointerDownOutside={(e) => e.preventDefault()}
       >
         <DialogHeader className="space-y-3">
-          <DialogTitle className="text-center flex flex-col items-center gap-2">
-            <span className="inline-flex items-center justify-center gap-2 px-6 py-2 rounded-full bg-gradient-to-r from-indigo-100 to-purple-100 border-[2px] border-indigo-950 shadow-[3px_3px_0px_0px_#c7d2fe]">
+          <DialogTitle className="text-center font-black text-3xl uppercase tracking-tighter text-indigo-950 animate-bounce-in">
+            <span className="flex items-center justify-center gap-3">
               {hasSubmitted ? (
-                <Sparkles className="w-5 h-5 text-purple-600" />
+                <Sparkles className="w-8 h-8 text-amber-500 animate-spin-grow" />
               ) : (
-                <span className="text-xl">⚡</span>
+                <Zap className="w-8 h-8 text-indigo-600 animate-tilt-shake" fill="currentColor" />
               )}
-              <span className="text-lg font-black uppercase tracking-wider text-indigo-950">
-                {hasSubmitted ? "Word Submitted" : "Choose Forbidden Word"}
+              <span>
+                {hasSubmitted ? "ส่งคำเรียบร้อย!" : "เลือกคำต้องห้าม"}
               </span>
             </span>
           </DialogTitle>
-          <DialogDescription className="text-center font-medium text-slate-500 text-sm">
+          <DialogDescription className="text-center font-bold text-slate-500 text-base animate-slide-up delay-100">
             {hasSubmitted
-              ? "The magic is happening. Waiting for others..."
-              : "Pick a tricky word for another player to say!"}
+              ? "เตรียมตัวให้พร้อม! กำลังรอเพื่อนๆ ส่งคำ..."
+              : "เลือกคำยากๆ ให้เพื่อนเผลอพูดออกมา!"}
           </DialogDescription>
         </DialogHeader>
 
         {!hasSubmitted ? (
           <form onSubmit={handleSubmit} className="space-y-6 mt-4">
             <div className="space-y-5">
+
               {/* Premium Pro Tips Box */}
-              <div className="p-5 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border-[3px] border-amber-200 shadow-[4px_4px_0px_0px_#fde68a] relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-20">
-                  <div className="text-6xl">💡</div>
+              <div className="p-5 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl comic-border-sm hover-lift relative overflow-hidden group animate-slide-up delay-150">
+                <div className="absolute -top-4 -right-4 p-4 opacity-20 pointer-events-none group-hover:rotate-12 group-hover:scale-110 transition-transform duration-300">
+                  <Lightbulb className="w-24 h-24 text-amber-600" fill="currentColor" />
                 </div>
                 <div className="relative z-10">
                   <h3 className="text-sm font-black text-amber-900 uppercase tracking-widest mb-3 flex items-center gap-2">
-                    Pro Tips
+                    💡 เทคนิคระดับโปร
                   </h3>
-                  <ul className="text-sm font-semibold text-amber-800/80 space-y-2.5">
-                    <li className="flex items-start gap-2">
-                      <div className="w-5 h-5 rounded-full bg-amber-200 flex items-center justify-center flex-shrink-0 mt-0.5 border border-amber-300">
-                        <span className="text-amber-700 text-xs">✓</span>
+                  <ul className="text-sm font-bold text-amber-800 space-y-2.5">
+                    <li className="flex items-start gap-2 animate-slide-right delay-200">
+                      <div className="w-5 h-5 rounded-full bg-amber-300 flex items-center justify-center flex-shrink-0 mt-0.5 border-2 border-amber-400">
+                        <span className="text-amber-900 text-xs">✓</span>
                       </div>
-                      <span>Choose common, everyday words</span>
+                      <span>เลือกคำที่ใช้บ่อยในชีวิตประจำวัน</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <div className="w-5 h-5 rounded-full bg-amber-200 flex items-center justify-center flex-shrink-0 mt-0.5 border border-amber-300">
-                        <span className="text-amber-700 text-xs">✓</span>
+                    <li className="flex items-start gap-2 animate-slide-right delay-300">
+                      <div className="w-5 h-5 rounded-full bg-amber-300 flex items-center justify-center flex-shrink-0 mt-0.5 border-2 border-amber-400">
+                        <span className="text-amber-900 text-xs">✓</span>
                       </div>
-                      <span>Avoid extremely rare vocabulary</span>
+                      <span>หลีกเลี่ยงคำศัพท์ที่ยากจนเกินไป</span>
                     </li>
                   </ul>
                 </div>
               </div>
 
               {/* Input Area */}
-              <div className="space-y-3">
+              <div className="space-y-3 animate-slide-up delay-300">
                 <label htmlFor="forbiddenWord" className="text-sm font-black text-indigo-950 uppercase tracking-wide flex items-center gap-2 ml-1">
-                  Your Word
+                  คำที่คุณเลือก
                 </label>
-                <Input
-                  id="forbiddenWord"
-                  type="text"
-                  placeholder="e.g., 'ACTUALLY', 'LIKE'..."
-                  value={forbiddenWord}
-                  onChange={(e) => setForbiddenWord(e.target.value.toLowerCase())}
-                  className="h-14 text-lg font-bold bg-slate-50 border-[3px] border-slate-200 rounded-2xl focus-visible:ring-4 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all placeholder:text-slate-300 placeholder:font-medium shadow-inner"
-                  maxLength={30}
-                  autoFocus
-                />
-                <p className="text-xs font-bold text-indigo-500/80 ml-1 flex items-center gap-1">
-                  🔀 Assigned randomly to another player
+                <div className="relative group">
+                  {/* ไม่ต้องใส่คลาสเยอะๆ แล้ว เพราะ Input ของเราจัดการเองทั้งหมด */}
+                  <Input
+                    id="forbiddenWord"
+                    type="text"
+                    placeholder="เช่น 'กิน', 'นอน', 'เดิน'..."
+                    value={forbiddenWord}
+                    onChange={(e) => setForbiddenWord(e.target.value.toLowerCase())}
+                    maxLength={30}
+                    autoFocus
+                  />
+                </div>
+                <p className="text-xs font-bold text-indigo-500/80 ml-1 flex items-center gap-1 animate-pulse">
+                  🔀 คำนี้จะถูกสุ่มไปให้เพื่อนคนอื่น
                 </p>
               </div>
             </div>
 
-            {/* 3D Gamified Button */}
-            <Button
-              type="submit"
-              disabled={!forbiddenWord.trim()}
-              className="group relative w-full h-14 bg-gradient-to-b from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-black text-lg tracking-wide rounded-2xl border-[3px] border-indigo-950 shadow-[0px_6px_0px_0px_#1e1b4b] hover:shadow-[0px_2px_0px_0px_#1e1b4b] hover:translate-y-[4px] disabled:opacity-50 disabled:hover:shadow-[0px_6px_0px_0px_#1e1b4b] disabled:hover:translate-y-0 transition-all duration-200"
-            >
-              <span className="flex items-center gap-2">
-                <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                Submit Word
-              </span>
-            </Button>
+            {/* Submit Button */}
+            <div className="animate-slide-up delay-500">
+              <Button
+                type="submit"
+                size="xl"
+                className="w-full group"
+                disabled={!forbiddenWord.trim()}
+              >
+                <span className="flex items-center justify-center gap-2">
+                  <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  ส่งคำเลย!
+                </span>
+              </Button>
+            </div>
           </form>
         ) : (
           <div className="space-y-8 mt-6">
             {/* Success Badge */}
             <div className="flex flex-col items-center gap-4">
-              <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center border-[3px] border-emerald-950 shadow-[0px_6px_0px_0px_#064e3b] animate-bounce">
-                <CheckCircle2 className="w-10 h-10 text-white" strokeWidth={3} />
+              <div className="w-24 h-24 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center comic-border animate-spin-grow">
+                <CheckCircle2 className="w-12 h-12 text-white animate-bounce-in delay-150" strokeWidth={4} />
               </div>
             </div>
 
             {/* Player List */}
-            <div className="space-y-4">
+            <div className="space-y-4 animate-slide-up delay-150">
               <div className="flex items-center justify-between ml-1">
                 <h4 className="text-sm font-black text-indigo-950 uppercase tracking-wide">
-                  Lobby Status
+                  สถานะห้องล๊อบบี้
                 </h4>
-                <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold border border-indigo-200">
-                  {players.length - waitingCount}/{players.length} Ready
+                <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-black border-[2px] border-indigo-200 animate-pulse">
+                  {players.length - waitingCount}/{players.length} พร้อมแล้ว
                 </span>
               </div>
-              
+
               <div className="space-y-3">
-                {players.map((player) => (
+                {players.map((player, idx) => (
                   <div
                     key={player.id}
-                    className={`flex items-center justify-between p-4 rounded-2xl border-[3px] transition-all duration-300 ${
-                      player.submitted_word 
-                        ? "bg-white border-emerald-200 shadow-[4px_4px_0px_0px_#a7f3d0]" 
-                        : "bg-slate-50 border-slate-200 shadow-[4px_4px_0px_0px_#e2e8f0]"
-                    }`}
+                    className={`flex items-center justify-between p-4 rounded-2xl border-[3px] transition-all duration-300 animate-pop-in hover-lift ${player.submitted_word
+                        ? "bg-emerald-50 border-emerald-300 shadow-[0px_4px_0px_0px_#6ee7b7]"
+                        : "bg-slate-50 border-slate-300 shadow-[0px_4px_0px_0px_#cbd5e1]"
+                      }`}
+                    style={{ animationDelay: `${0.2 + idx * 0.1}s` }}
                   >
-                    <span className={`font-bold ${player.submitted_word ? "text-emerald-900" : "text-slate-600"}`}>
+                    <span className={`font-black text-lg ${player.submitted_word ? "text-emerald-900" : "text-slate-600"}`}>
                       {player.name}
                     </span>
                     {player.submitted_word ? (
-                      <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center border-2 border-emerald-500 text-emerald-600">
-                        <CheckCircle2 className="w-5 h-5" strokeWidth={3} />
+                      <div className="w-8 h-8 rounded-full bg-emerald-200 flex items-center justify-center border-2 border-emerald-500 text-emerald-700 animate-spin-grow">
+                        <CheckCircle2 className="w-5 h-5" strokeWidth={4} />
                       </div>
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center border-2 border-slate-300 text-slate-500">
+                      <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center border-2 border-slate-400 text-slate-500">
                         <Loader2 className="w-4 h-4 animate-spin" strokeWidth={3} />
                       </div>
                     )}
@@ -177,10 +181,10 @@ export default function DraftingModal({
 
             {/* Waiting Footer */}
             {waitingCount > 0 && (
-              <div className="flex items-center justify-center gap-3 p-4 bg-indigo-50 rounded-2xl border-2 border-indigo-100 border-dashed animate-pulse">
-                <Loader2 className="w-5 h-5 text-indigo-500 animate-spin" />
+              <div className="flex items-center justify-center gap-3 p-4 bg-indigo-50 rounded-2xl border-2 border-indigo-200 border-dashed animate-pulse-glow">
+                <Loader2 className="w-5 h-5 text-indigo-600 animate-spin" strokeWidth={3} />
                 <p className="text-indigo-900 font-bold text-sm">
-                  Waiting for {waitingCount} more {waitingCount === 1 ? "player" : "players"}...
+                  กำลังรอเพื่อนอีก {waitingCount} คน...
                 </p>
               </div>
             )}
